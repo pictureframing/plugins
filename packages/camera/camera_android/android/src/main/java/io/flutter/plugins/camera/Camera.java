@@ -15,6 +15,7 @@ import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.OutputConfiguration;
@@ -404,6 +405,11 @@ class Camera
     // Build Flutter surface to render to.
     ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
     
+    // Added by Picture Framing to get camera specs
+    String cameraName = cameraProperties.getCameraName();
+    CameraManager cameraManager = CameraUtils.getCameraManager(activity);
+    CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraName);
+
     // Added by Picture Framing for stabilization
     int[] availableOpticalStabilization = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION);
     boolean stabilizationAvailable = false;
@@ -417,9 +423,9 @@ class Camera
 
     // Added by Picture Framing; digital or optical stabilization
     if (stabilizationAvailable) {
-      captureRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, 1);
+      previewRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, 1);
     } else {
-      captureRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, 1);
+      previewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, 1);
     }
 
     // Build Flutter surface to render to
