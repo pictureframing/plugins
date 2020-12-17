@@ -397,7 +397,8 @@ NSString *const errorMethod = @"error";
   if ([_captureDevice position] == AVCaptureDevicePositionFront) {
     connection.videoMirrored = YES;
   }
-
+  connection.videoOrientation = AVCaptureVideoOrientationPortrait;
+  connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeStandard; // Added by Picture Framing to add video stabilization
   [_captureSession addInputWithNoConnections:_captureVideoInput];
   [_captureSession addOutputWithNoConnections:_captureVideoOutput];
   [_captureSession addConnection:connection];
