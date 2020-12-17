@@ -7,8 +7,8 @@
 #import "FLTSavePhotoDelegate.h"
 #import "QueueUtils.h"
 
-@import CoreMotion;
 #import <libkern/OSAtomic.h>
+@import CoreMotion;
 
 @implementation FLTImageStreamHandler
 
@@ -164,6 +164,14 @@ NSString *const errorMethod = @"error";
   _capturePhotoOutput = [AVCapturePhotoOutput new];
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
   [_videoCaptureSession addOutput:_capturePhotoOutput];
+
+  if ([_captureDevice position] == AVCaptureDevicePositionFront) {
+    connection.videoMirrored = YES;
+  }
+
+  // Added by Picture Framing to add video stabilization
+  connection.videoOrientation = AVCaptureVideoOrientationPortrait;
+  connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeStandard;
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
@@ -1140,8 +1148,14 @@ NSString *const errorMethod = @"error";
     return NO;
   }
 
-  NSDictionary *videoSettings = [_captureVideoOutput
-      recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeMPEG4];
+  /**
+   * Addedby Picture Framing to set iOS-Video Codec to H.264.
+   * See flutter camera-issue https://github.com/flutter/flutter/issues/83074
+   */
+  NSDictionary *videoSettings =
+      [_captureVideoOutput recommendedVideoSettingsForVideoCodecType:AVVideoCodecTypeH264
+                                           assetWriterOutputFileType:AVFileTypeMPEG4];
+
   _videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
                                                          outputSettings:videoSettings];
 
