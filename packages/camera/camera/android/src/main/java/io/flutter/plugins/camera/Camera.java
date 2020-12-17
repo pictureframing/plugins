@@ -281,6 +281,9 @@ public class Camera {
     // Create a new capture builder.
     captureRequestBuilder = cameraDevice.createCaptureRequest(templateType);
 
+    // Added by Picture Framing to get camera specs
+    CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraName);
+
     // Added by Picture Framing for stabilization
     int[] availableOpticalStabilization = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION);
     boolean stabilizationAvailable = false;
