@@ -233,6 +233,7 @@ FourCharCode const videoFormat = kCVPixelFormatType_32BGRA;
     connection.videoMirrored = YES;
   }
   connection.videoOrientation = AVCaptureVideoOrientationPortrait;
+  connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeStandard; // Added by Picture Framing to add video stabilization
   [_captureSession addInputWithNoConnections:_captureVideoInput];
   [_captureSession addOutputWithNoConnections:_captureVideoOutput];
   [_captureSession addConnection:connection];

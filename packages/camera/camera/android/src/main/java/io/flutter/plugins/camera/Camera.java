@@ -281,6 +281,24 @@ public class Camera {
     // Create a new capture builder.
     captureRequestBuilder = cameraDevice.createCaptureRequest(templateType);
 
+    // Added by Picture Framing for stabilization
+    int[] availableOpticalStabilization = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION);
+    boolean stabilizationAvailable = false;
+    if (availableOpticalStabilization != null) {
+        for (int mode : availableOpticalStabilization) {
+            if (mode == CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_ON) {
+                stabilizationAvailable = true;
+            }
+        }
+    }
+
+    // Added by Picture Framing; digital or optical stabilization
+    if (stabilizationAvailable) {
+      captureRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, 1);
+    } else {
+      captureRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, 1);
+    }
+
     // Build Flutter surface to render to
     SurfaceTexture surfaceTexture = flutterTexture.surfaceTexture();
     surfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
