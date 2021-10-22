@@ -422,10 +422,15 @@ class Camera
     }
 
     // Added by Picture Framing; digital or optical stabilization
+    // 
+    // Making sure that both of them are never active at the same time
+    // as stated in the Camera2-API documentation.
     if (stabilizationAvailable) {
       previewRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, 1);
+      previewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, 0);
     } else {
       previewRequestBuilder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, 1);
+      previewRequestBuilder.set(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, 0);
     }
 
     // Build Flutter surface to render to
