@@ -168,7 +168,6 @@ NSString *const errorMethod = @"error";
   [_captureSession addConnection:connection];
 
   // Added by Picture Framing to add video stabilization
-  connection.videoOrientation = AVCaptureVideoOrientationPortrait;
   connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeStandard; 
   
   if (@available(iOS 10.0, *)) {
