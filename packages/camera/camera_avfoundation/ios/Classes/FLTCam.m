@@ -211,7 +211,6 @@ NSString *const errorMethod = @"error";
   }
 
   // Added by Picture Framing to add video stabilization
-  connection.videoOrientation = AVCaptureVideoOrientationPortrait;
   connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeStandard;
 
   _motionManager = [[CMMotionManager alloc] init];
