@@ -1061,6 +1061,11 @@ NSString *const errorMethod = @"error";
 
   _videoWriterInput.expectsMediaDataInRealTime = YES;
 
+  // Added by Picture Framing to re-mirror videos recorded with the device’s front-facing camera.
+  if ([_captureDevice position] == AVCaptureDevicePositionFront) {
+    _videoWriterInput.transform = CGAffineTransformMake(-1, 0, 0, 1, 0, 0);
+  }
+  
   // Add the audio input
   if (_enableAudio) {
     AudioChannelLayout acl;
