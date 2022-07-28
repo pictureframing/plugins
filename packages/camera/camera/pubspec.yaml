@@ -26,13 +26,13 @@ dependencies:
     git:
       url: https://github.com/pictureframing/plugins
       path: packages/camera/camera_android
-      ref: camera-v0.10.0+h264
+      ref: camera-v0.10.0+1+h264
 
   camera_avfoundation:
     git:
       url: https://github.com/pictureframing/plugins
       path: packages/camera/camera_avfoundation
-      ref: camera-v0.10.0+h264
+      ref: camera-v0.10.0+1+h264
       
   camera_platform_interface: ^2.2.0
   camera_web: ^0.3.0
