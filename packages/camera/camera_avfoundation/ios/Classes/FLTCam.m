@@ -7,6 +7,7 @@
 #import "FLTSavePhotoDelegate.h"
 #import "QueueUtils.h"
 
+#import <Accelerate/Accelerate.h>
 #import <libkern/OSAtomic.h>
 @import CoreMotion;
 
@@ -531,9 +532,29 @@ NSString *const errorMethod = @"error";
 
       _lastVideoSampleTime = currentSampleTime;
 
-      CVPixelBufferRef nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
       CMTime nextSampleTime = CMTimeSubtract(_lastVideoSampleTime, _videoTimeOffset);
-      [_videoAdaptor appendPixelBuffer:nextBuffer withPresentationTime:nextSampleTime];
+
+      // If device’s front facing camera is being used for the video-recording
+      // the sampleBuffer is horizonzally flippped using the custom horizontalReflectBuffer-method
+      // to unmirror the resulting video.
+      //
+      // Added by PICTURE FRAMING
+      if ([_captureDevice position] == AVCaptureDevicePositionFront) {
+        CVPixelBufferRef horizontalReflectedBuffer = [self horizontalReflectBuffer:sampleBuffer];
+        [_videoAdaptor appendPixelBuffer:horizontalReflectedBuffer
+                    withPresentationTime:nextSampleTime];
+
+        // Release the pixel buffer to free memory malloced in the horizontalReflectBuffer-method
+        // after the pixel buffer was successfully appended.
+        if (horizontalReflectedBuffer) {
+          CVPixelBufferRelease(horizontalReflectedBuffer);
+        }
+
+      } else {
+        CVPixelBufferRef nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+        [_videoAdaptor appendPixelBuffer:nextBuffer withPresentationTime:nextSampleTime];
+      }
+
     } else {
       CMTime dur = CMSampleBufferGetDuration(sampleBuffer);
 
@@ -1129,11 +1150,6 @@ NSString *const errorMethod = @"error";
 
   _videoWriterInput.expectsMediaDataInRealTime = YES;
 
-  // Added by Picture Framing to re-mirror videos recorded with the device’s front-facing camera.
-  if ([_captureDevice position] == AVCaptureDevicePositionFront) {
-    _videoWriterInput.transform = CGAffineTransformMake(-1, 0, 0, 1, 0, 0);
-  }
-  
   // Add the audio input
   if (_enableAudio) {
     AudioChannelLayout acl;
@@ -1199,4 +1215,54 @@ NSString *const errorMethod = @"error";
     }
   }
 }
+
+/// Reflects the provided sampleBuffer across the horizonzal axis by using
+/// `vImageHorizontalReflect_ARGB8888`.
+/// Used to unmirror each frame recorded with the device’s front facing camera.
+///
+/// See:
+/// https://developer.apple.com/documentation/accelerate/1509199-vimagehorizontalreflect_argb8888?language=objc
+///
+/// Added by PICTURE FRAMING
+- (CVPixelBufferRef)horizontalReflectBuffer:(CMSampleBufferRef)sampleBuffer {
+  CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+  CVPixelBufferLockBaseAddress(imageBuffer, 0);
+
+  size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
+  size_t width = CVPixelBufferGetWidth(imageBuffer);
+  size_t height = CVPixelBufferGetHeight(imageBuffer);
+
+  const size_t bytesPerRowOut = bytesPerRow;
+  const size_t dstSize = bytesPerRowOut * height * sizeof(unsigned char);
+
+  void *srcBuff = CVPixelBufferGetBaseAddress(imageBuffer);
+  unsigned char *dstBuff = (unsigned char *)malloc(dstSize);
+
+  vImage_Buffer inbuff = {srcBuff, height, width, bytesPerRow};
+  vImage_Buffer outbuff = {dstBuff, height, width, bytesPerRowOut};
+
+  vImage_Error err = vImageHorizontalReflect_ARGB8888(&inbuff, &outbuff, 0);
+  if (err != kvImageNoError) {
+    NSLog(@"%ld", err);
+  }
+
+  CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
+
+  CVPixelBufferRef reflectedBuffer = NULL;
+  CVPixelBufferCreateWithBytes(NULL, width, height, _videoFormat, outbuff.data, bytesPerRowOut,
+                               freePixelBufferDataAfterRelease, NULL, NULL, &reflectedBuffer);
+
+  return reflectedBuffer;
+}
+
+/// Freeing the memory malloced for the vImage reflection in horizontalReflectBuffer.
+///
+/// See:
+/// https://developer.apple.com/documentation/corevideo/cvpixelbufferreleasebytescallback?language=objc
+///
+/// Added by PICTURE FRAMING
+void freePixelBufferDataAfterRelease(void *releaseRefCon, const void *baseAddress) {
+  free((void *)baseAddress);
+}
+
 @end
