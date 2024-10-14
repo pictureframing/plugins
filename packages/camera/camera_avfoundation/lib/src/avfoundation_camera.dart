@@ -82,12 +82,14 @@ class AVFoundationCamera extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
+    bool enableStabilization = false,
   }) =>
       createCameraWithSettings(
           cameraDescription,
           MediaSettings(
             resolutionPreset: resolutionPreset,
             enableAudio: enableAudio,
+            enableStabilization: enableStabilization,
           ));
 
   @override
@@ -105,6 +107,7 @@ class AVFoundationCamera extends CameraPlatform {
             videoBitrate: mediaSettings?.videoBitrate,
             audioBitrate: mediaSettings?.audioBitrate,
             enableAudio: mediaSettings?.enableAudio ?? true,
+            enableStabilization: mediaSettings?.enableStabilization ?? false,
           ));
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);

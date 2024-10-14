@@ -122,6 +122,7 @@ class PlatformMediaSettings {
     required this.videoBitrate,
     required this.audioBitrate,
     required this.enableAudio,
+    required this.enableStabilization,
   });
 
   final PlatformResolutionPreset resolutionPreset;
@@ -129,6 +130,7 @@ class PlatformMediaSettings {
   final int? videoBitrate;
   final int? audioBitrate;
   final bool enableAudio;
+  final bool enableStabilization;
 }
 
 // Pigeon equivalent of CGPoint.

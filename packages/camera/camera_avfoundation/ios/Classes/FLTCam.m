@@ -14,6 +14,7 @@
 #import "FLTThreadSafeEventChannel.h"
 #import "QueueUtils.h"
 #import "messages.g.h"
+#import <AVFoundation/AVFoundation.h>
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -212,7 +213,13 @@ NSString *const errorMethod = @"error";
   }
 
   // Added by Picture Framing to add video stabilization
-  connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeStandard;
+  if (_mediaSettings.enableStabilization) {
+    NSLog(@"Video stabilization enabled");
+    connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeStandard;
+  } else {
+    connection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeOff;
+    NSLog(@"Video stabilization disabled");
+  }
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
@@ -1261,7 +1268,11 @@ NSString *const errorMethod = @"error";
    * Addedby Picture Framing to set iOS-Video Codec to H.264.
    * See flutter camera-issue https://github.com/flutter/flutter/issues/83074
    */
-  videoSettings[AVVideoCodecKey] = AVVideoCodecType.h264;
+  if (@available(iOS 11.0, *)) {
+      videoSettings[AVVideoCodecKey] = AVVideoCodecTypeH264;
+  } else {
+      videoSettings[AVVideoCodecKey] = AVVideoCodecH264;
+  }
 
   if (_mediaSettings.videoBitrate || _mediaSettings.framesPerSecond) {
     NSMutableDictionary *compressionProperties = [[NSMutableDictionary alloc] init];
