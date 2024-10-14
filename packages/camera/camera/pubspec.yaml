@@ -15,7 +15,7 @@ flutter:
   plugin:
     platforms:
       android:
-        default_package: camera_android_camerax
+        default_package: camera_android
       ios:
         default_package: camera_avfoundation
       web:
@@ -26,15 +26,24 @@ dependencies:
     git:
       url: https://github.com/pictureframing/plugins
       path: packages/camera/camera_android
-      ref: camera-v0.10.5+5+h264
-  camera_avfoundation: ^0.9.15
-    # git:
-    #   url: https://github.com/pictureframing/plugins
-    #   path: packages/camera/camera_avfoundation
-    #   ref: camera-v0.10.5+5+h264
-  camera_platform_interface: ^2.6.0
-  camera_web: ^0.3.3
-      
+      ref: picture-framing_0.11.0
+  camera_avfoundation:
+    git:
+      url: https://github.com/pictureframing/plugins
+      path: packages/camera/camera_avfoundation
+      ref: picture-framing_0.11.0
+  camera_platform_interface:
+    git:
+      url: https://github.com/pictureframing/plugins
+      path: packages/camera/camera_platform_interface
+      ref: picture-framing_0.11.0
+    
+  camera_web: # ^0.3.3
+    git:
+      url: https://github.com/pictureframing/plugins
+      path: packages/camera/camera_web
+      ref: picture-framing_0.11.0
+
   flutter:
     sdk: flutter
   flutter_plugin_android_lifecycle: ^2.0.2
