@@ -88,11 +88,12 @@ class MethodChannelCamera extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
+    bool enableStabilization = false,
   }) async =>
       createCameraWithSettings(
           cameraDescription,
           MediaSettings(
-              resolutionPreset: resolutionPreset, enableAudio: enableAudio));
+              resolutionPreset: resolutionPreset, enableAudio: enableAudio, enableStabilization:enableStabilization));
 
   @override
   Future<int> createCameraWithSettings(
@@ -111,6 +112,7 @@ class MethodChannelCamera extends CameraPlatform {
         'videoBitrate': mediaSettings.videoBitrate,
         'audioBitrate': mediaSettings.audioBitrate,
         'enableAudio': mediaSettings.enableAudio,
+        'enableStabilization': mediaSettings.enableStabilization,
       });
 
       return reply!['cameraId']! as int;
