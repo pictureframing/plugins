@@ -3,6 +3,7 @@ description: A Flutter plugin for getting information about and controlling the 
 repository: https://github.com/flutter/packages/tree/main/packages/camera/camera_web
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+camera%22
 version: 0.3.3
+publish_to: none
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
@@ -17,7 +18,11 @@ flutter:
         fileName: camera_web.dart
 
 dependencies:
-  camera_platform_interface: ^2.6.0
+  camera_platform_interface:
+    git:
+      url: https://github.com/pictureframing/plugins
+      path: packages/camera/camera_platform_interface
+      ref: picture-framing_0.11.0
   flutter:
     sdk: flutter
   flutter_web_plugins:
