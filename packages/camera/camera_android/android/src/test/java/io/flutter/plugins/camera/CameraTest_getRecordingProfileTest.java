@@ -64,6 +64,7 @@ public class CameraTest_getRecordingProfileTest {
         mock(TextureRegistry.SurfaceTextureEntry.class);
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
+    final boolean enableStabilization = false;
 
     camera =
         new Camera(
@@ -72,7 +73,7 @@ public class CameraTest_getRecordingProfileTest {
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio));
+            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio, enableStabilization));
   }
 
   @Config(maxSdk = 30)

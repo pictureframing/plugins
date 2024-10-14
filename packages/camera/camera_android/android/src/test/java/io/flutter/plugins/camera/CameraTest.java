@@ -140,6 +140,7 @@ public class CameraTest {
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
+    final boolean enableStabilization = false;
 
     when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
     mockHandlerFactory.when(() -> Camera.HandlerFactory.create(any())).thenReturn(mockHandler);
@@ -167,7 +168,7 @@ public class CameraTest {
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio));
+            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio, enableStabilization));
 
     final CamcorderProfile mockProfileLegacy = mock(CamcorderProfile.class);
     mockProfileLegacy.videoFrameRate = 15;
@@ -201,6 +202,7 @@ public class CameraTest {
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
+    final boolean enableStabilization = false;
 
     when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
     SensorOrientationFeature mockSensorOrientationFeature = mock(SensorOrientationFeature.class);
@@ -214,7 +216,7 @@ public class CameraTest {
             spyMockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio));
+            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio, enableStabilization));
 
     verify(spyMockCameraFeatureFactory, times(1))
         .createSensorOrientationFeature(mockCameraProperties, mockActivity, mockDartMessenger);
@@ -1181,6 +1183,7 @@ public class CameraTest {
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = true;
+    final boolean enableStabilization = true;
 
     //region These parameters should be set in android MediaRecorder.
     final int fps = 15;
@@ -1192,7 +1195,7 @@ public class CameraTest {
 
     final Camera.VideoCaptureSettings parameters =
         new Camera.VideoCaptureSettings(
-            resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate);
+            resolutionPreset, enableAudio, enableStabilization, fps, videoBitrate, audioBitrate);
 
     // Use a wildcard, since `new Range<Integer>[] {...}`
     // results in a 'Generic array creation' error.

@@ -389,6 +389,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     String cameraName = call.argument("cameraName");
     String preset = call.argument("resolutionPreset");
     boolean enableAudio = call.argument("enableAudio");
+    boolean enableStabilization = call.argument("enableStabilization");
     Integer fps = call.argument("fps");
     Integer videoBitrate = call.argument("videoBitrate");
     Integer audioBitrate = call.argument("audioBitrate");
@@ -410,7 +411,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
             dartMessenger,
             cameraProperties,
             new Camera.VideoCaptureSettings(
-                resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate));
+                resolutionPreset, enableAudio, enableStabilization, fps, videoBitrate, audioBitrate));
 
     Map<String, Object> reply = new HashMap<>();
     reply.put("cameraId", flutterSurfaceTexture.id());
