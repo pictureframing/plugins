@@ -52,4 +52,12 @@
   return [output recommendedVideoSettingsForAssetWriterWithOutputFileType:fileType];
 }
 
+- (nullable NSDictionary<NSString *, id> *)
+    recommendedVideoSettingsForAssetWriterWithFileTypeAndCodec:(AVFileType)fileType
+                                                     withCodec:(AVVideoCodecType)codec
+                                                     forOutput:(AVCaptureVideoDataOutput *)output {
+  return [output recommendedVideoSettingsForVideoCodecType:codec
+                                 assetWriterOutputFileType:fileType];
+}
+
 @end

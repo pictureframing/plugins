@@ -10,11 +10,11 @@
 #import <Accelerate/Accelerate.h>
 #import <libkern/OSAtomic.h>
 
+#import <AVFoundation/AVFoundation.h>
 #import "FLTSavePhotoDelegate.h"
 #import "FLTThreadSafeEventChannel.h"
 #import "QueueUtils.h"
 #import "messages.g.h"
-#import <AVFoundation/AVFoundation.h>
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -1260,19 +1260,12 @@ NSString *const errorMethod = @"error";
     return NO;
   }
 
+  // Use our custom recommendedVideoSettingsForAssetWriterWithFileTypeAndCodec method to get the
+  // recommended video settings for the current device with the H264 codec.
   NSMutableDictionary<NSString *, id> *videoSettings = [[_mediaSettingsAVWrapper
-      recommendedVideoSettingsForAssetWriterWithFileType:AVFileTypeMPEG4
-                                               forOutput:_captureVideoOutput] mutableCopy];
-
-  /**
-   * Addedby Picture Framing to set iOS-Video Codec to H.264.
-   * See flutter camera-issue https://github.com/flutter/flutter/issues/83074
-   */
-  if (@available(iOS 11.0, *)) {
-      videoSettings[AVVideoCodecKey] = AVVideoCodecTypeH264;
-  } else {
-      videoSettings[AVVideoCodecKey] = AVVideoCodecH264;
-  }
+      recommendedVideoSettingsForAssetWriterWithFileTypeAndCodec:AVFileTypeMPEG4
+                                                       withCodec:AVVideoCodecTypeH264
+                                                       forOutput:_captureVideoOutput] mutableCopy];
 
   if (_mediaSettings.videoBitrate || _mediaSettings.framesPerSecond) {
     NSMutableDictionary *compressionProperties = [[NSMutableDictionary alloc] init];
